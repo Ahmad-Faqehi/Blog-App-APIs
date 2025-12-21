@@ -29,3 +29,32 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/blog-api:${{ github.run_number }}
+
+
+
+      # ---------- Kubernetes Section ----------
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.0
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Verify cluster access
+        run: kubectl get nodes
+
+      - name: Deploy new image to Kubernetes
+        run: |
+          kubectl set image deployment/blog-api \
+            blog-api=${{ secrets.DOCKERHUB_USERNAME }}/blog-api:${{ github.run_number }} \
+            -n default
+
+      - name: Wait for rollout to complete
+        run: |
+          kubectl rollout status deployment/blog-api \
+            -n default
