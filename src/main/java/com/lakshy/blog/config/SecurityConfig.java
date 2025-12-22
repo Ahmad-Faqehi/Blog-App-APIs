@@ -12,10 +12,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import java.util.Arrays;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.lakshy.blog.security.CustomUserDetailService;
 import com.lakshy.blog.security.JwtAuthenticationEntryPoint;
-import com.lakshy.blog.security.JwtAuthenticationFilter;
+import com.lakshy.blog.security.JwtAuthenticationFilter; 
 
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -53,8 +57,11 @@ public class SecurityConfig {
         http
             .csrf()
             .disable()
+            .cors()
+            .and()
             .authorizeHttpRequests()
             .antMatchers(PUBLIC_URLS).permitAll()
+            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .antMatchers(HttpMethod.GET).permitAll()
             .anyRequest()
             .authenticated()
@@ -82,6 +89,18 @@ public class SecurityConfig {
 //        return builder.userDetailsService(this.customUserDetailService).passwordEncoder(passwordEncoder()).and().build();
 //    }
 	
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedHeaders(Arrays.asList("*"));
+		config.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
+	}
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
