@@ -3,6 +3,7 @@ package com.lakshy.blog.config;
 import java.time.Duration;
 
 import org.springframework.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,9 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 public class RedisConfig {
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+    public RedisConnectionFactory redisConnectionFactory(@Value("${spring.redis.host}") String redisHost,
+            @Value("${spring.redis.port}") int redisPort) {
+        return new LettuceConnectionFactory(redisHost, redisPort);
     }
 
     @Bean
