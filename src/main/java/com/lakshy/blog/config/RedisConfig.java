@@ -25,9 +25,10 @@ public class RedisConfig {
     }
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory,
+            @Value("${app.cache.ttl.minutes:10}") long ttlMinutes) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
+                .entryTtl(Duration.ofMinutes(ttlMinutes))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                         .fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
