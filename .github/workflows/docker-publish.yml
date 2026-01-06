@@ -64,27 +64,27 @@ jobs:
   # --------------------------------
   # 3️⃣ Deploy to Kubernetes
   # --------------------------------
-  deploy:
-    runs-on: ubuntu-latest
-    needs: push
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: push
 
-    steps:
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: v1.29.0
+  #   steps:
+  #     - name: Install kubectl
+  #       uses: azure/setup-kubectl@v4
+  #       with:
+  #         version: v1.29.0
 
-      - name: Configure kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > ~/.kube/config
-          chmod 600 ~/.kube/config
+  #     - name: Configure kubeconfig
+  #       run: |
+  #         mkdir -p ~/.kube
+  #         echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > ~/.kube/config
+  #         chmod 600 ~/.kube/config
 
-      - name: Deploy new image
-        run: |
-          kubectl set image deployment/blog-api \
-            blog-api=${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
-            -n default
+  #     - name: Deploy new image
+  #       run: |
+  #         kubectl set image deployment/blog-api \
+  #           blog-api=${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+  #           -n default
 
-      - name: Wait for rollout
-        run: kubectl rollout status deployment/blog-api -n default
+  #     - name: Wait for rollout
+  #       run: kubectl rollout status deployment/blog-api -n default
