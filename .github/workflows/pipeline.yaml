@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    uses: org/ci-templates/.github/workflows/docker-build.yaml@v1
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-build.yaml@v1
     with:
       image_name: blog-api
       image_tag: ${{ github.run_number }}
@@ -15,7 +15,7 @@ jobs:
 
   push:
     needs: build
-    uses: org/ci-templates/.github/workflows/docker-push.yaml@v1
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-push.yaml@v1
     with:
       image_name: blog-api
       image_tag: ${{ github.run_number }}
