@@ -25,7 +25,7 @@ jobs:
 
 
   deploy:
-    needs: Docker
+    needs: push
     uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2
     with:
       PROJECT_NAME: blog-api
