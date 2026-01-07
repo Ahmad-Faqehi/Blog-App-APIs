@@ -6,7 +6,7 @@ on:
 
 jobs:
   Docker:
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-build.yaml@v2
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-build.yaml@v2.2
     with:
       image_name: blog-api
       image_tag: ${{ github.run_number }}
@@ -15,7 +15,7 @@ jobs:
 
   push:
     needs: Docker
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-push.yaml@v2
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-push.yaml@v2.2
     with:
       image_name: blog-api
       image_tag: ${{ github.run_number }}
@@ -24,9 +24,9 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
 
-  deploy:
+  ArgoCD:
     needs: push
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2.1
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2.2
     with:
       PROJECT_NAME: blog-api
       PROJECT_ENV: dev
