@@ -26,7 +26,7 @@ jobs:
 
   deploy:
     needs: push
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2.1
     with:
       PROJECT_NAME: blog-api
       PROJECT_ENV: dev
