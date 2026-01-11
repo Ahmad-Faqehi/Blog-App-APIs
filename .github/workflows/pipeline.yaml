@@ -5,32 +5,38 @@ on:
     branches: [ main ]
 
 jobs:
-  Docker:
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-build.yaml@v2.2
+  git-flow:
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/git-flow.yaml@v2.6
+
+
+  docker-build:
+    needs: git-flow
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-build.yaml@v2.6
     with:
-      image_name: blog-api
+      image_name: ${{ github.event.repository.name }}
       image_tag: ${{ github.run_number }}
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
-  push:
-    needs: Docker
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-push.yaml@v2.2
+
+  docker-push:
+    needs: docker-build
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/docker-push.yaml@v2.6
     with:
-      image_name: blog-api
+      image_name: ${{ github.event.repository.name }}
       image_tag: ${{ github.run_number }}
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
 
-  ArgoCD:
-    needs: push
-    uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2.2
+  deploy:
+    needs: [git-flow, docker-push]
+    uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2.6
     with:
-      PROJECT_NAME: blog-api
-      PROJECT_ENV: dev
-      PROJECT_NAMESPACE: backend
+      PROJECT_NAME: ${{ github.event.repository.name }}
+      PROJECT_ENV: ${{ needs.git-flow.outputs.ENV }}
+      PROJECT_NAMESPACE: ${{ needs.git-flow.outputs.ENV }}-${{ github.event.repository.name }}
       IMAGE_TAG: ${{ github.run_number }}
     secrets:
       GITOPS_PAT: ${{ secrets.GITOPS_PAT }}
