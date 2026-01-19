@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 
 @Component
@@ -15,9 +16,14 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String method = request.getMethod();
         String uri = request.getRequestURI();
-        if (!"/api/v1/health".equals(uri)) {
-            System.out.println(method + " " + uri);
+        if ("/api/v1/health".equals(uri)) {
+            filterChain.doFilter(request, response);
+            return;
         }
-        filterChain.doFilter(request, response);
+        ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
+        filterChain.doFilter(request, wrappedResponse);
+        int status = wrappedResponse.getStatus();
+        System.out.println(method + " " + uri + " " + status);
+        wrappedResponse.copyBodyToResponse();
     }
 }
