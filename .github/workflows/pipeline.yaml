@@ -5,7 +5,6 @@ on:
     branches:
       - development
       - feature-*
-      - main
   pull_request:
     types: [closed]
     branches:
@@ -40,6 +39,7 @@ jobs:
 
   deploy:
     needs: [git-flow, docker-push]
+    if: "!startsWith(github.ref_name, 'feature-')"
     uses: Ahmad-Faqehi/ci-templates/.github/workflows/deploy-ArgoCD.yaml@v2.8
     with:
       PROJECT_NAME: ${{ github.event.repository.name }}
