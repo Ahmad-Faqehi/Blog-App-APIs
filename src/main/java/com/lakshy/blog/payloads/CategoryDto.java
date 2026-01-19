@@ -11,12 +11,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CategoryDto {
-	
+
 	private Integer categoryId;
 	@NotBlank
-	@Size(min = 3,message = "length of title should be minimum 3")
+	@Size(min = 3, message = "length of title should be minimum 3")
 	private String categoryTitle;
-	
+
 	@NotBlank
 	@Size(min = 10, message = "length should be minimum 10")
 	private String categoryDescription;
